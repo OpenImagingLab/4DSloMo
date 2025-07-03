@@ -1,0 +1,434 @@
+
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>4DSloMO: 4D Reconstruction for High Speed Scene with Asynchronous Capture</title>
+
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta property="og:image" content="https://bilarfpro.github.io/img/teaser.jpg">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1800">
+    <meta property="og:image:height" content="1143">
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://bilarfpro.github.io"/>
+    <meta property="og:title" content="Bilateral Guided Radiance Field Processing" />
+    <meta property="og:description" content="In the training stage, we jointly optimize per-view 3D bilateral grids with NeRF to disentangle photometric variation, achieving floater-free view synthesis. In the finishing stage, we propose a radiance-finishing approach that can lift 2D view retouching to the whole 3D scene, using a low-rank 4D bilateral grid." />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Bilateral Guided Radiance Field Processing" />
+    <meta name="twitter:description" content="In the training stage, we jointly optimize per-view 3D bilateral grids with NeRF to disentangle photometric variation, achieving floater-free view synthesis. In the finishing stage, we propose a radiance-finishing approach that can lift 2D view retouching to the whole 3D scene, using a low-rank 4D bilateral grid." />
+    <meta name="twitter:image" content="https://bilarfpro.github.io/img/teaser.jpg" />
+
+
+    <link rel="shortcut icon" href="/favicon.png" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.css">
+    <link rel="stylesheet" href="css/app.css">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bulma-tabs.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.8.0/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.5.3/clipboard.min.js"></script>
+    
+    <script src="js/app.js"></script>
+    <script src="js/video_comparison.js"></script>
+</head>
+
+<body>
+    <div class="container" id="main">
+        <div class="row" style="margin-top: 20px;">
+            <h2 class="col-md-12 text-center">
+                4DSloMO: 4D Reconstruction for High Speed Scene with Asynchronous Capture</br> 
+            </h2>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <ul class="list-inline">
+                    <li>
+                        <a href="https://yutian10.github.io" style="font-size: 18px;">
+                          Yutian Chen
+                        </a><sup>1,2</sup>
+                    </li>
+                    <li>
+                        <a href="https://guoshi28.github.io" style="font-size: 18px;">
+                          Shi Guo
+                        </a><sup>2</sup>
+                    </li>
+                    <li>
+                        <a href="https://tianshuoy.github.io" style="font-size: 18px;">
+                            Tianshuo Yang
+                        </a><sup>3</sup>
+                    </li>
+                    <li>
+                        <a href="https://dinglihe.github.io" style="font-size: 18px;">
+                          Lihe Ding
+                        </a><sup>1</sup>
+                    </li>
+                    <li>
+                        <a href="" style="font-size: 18px;">
+                          Xiuyuan Yu
+                        </a><sup>1</sup>
+                    </li>
+                    <li>
+                        <a href="http://www.gujinwei.org" style="font-size: 18px;">
+                          Jinwei Gu
+                        </a><sup>4</sup>
+                    </li>
+                    <li>
+                        <a href="https://tianfan.info/" style="font-size: 18px;">
+                          Tianfan Xue
+                        </a><sup>1 2</sup>
+                    </li>
+                    </br>
+                </ul>
+                <span style="font-size: 18px; padding-top: 10px;">
+                    <span><sup>1</sup>The Chinese University of Hong Kong</span>
+                    <span style="padding-left: 10px;"><sup>2</sup>Shanghai AI Laboratory</span>
+                    <span style="padding-left: 10px;"><sup>3</sup>The University of Hong Kong</span>
+                    <span style="padding-left: 10px;"><sup>4</sup>NVIDIA</span>
+                </span>
+            </div>
+        </div>
+        <br>
+
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-4 col-offset-4 text-center" style="display: flex; justify-content: center;">
+                <ul class="nav nav-pills">
+                    <li>
+                        <a href="">
+                        <image src="img/paper_thumbnail.png" height="60px" style="border: 1px solid #ddd;">
+                            <h4><strong>Paper</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                        <image src="img/youtube_icon.png" height="60px">
+                            <h4><strong>Video</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                        <image src="img/github.png" height="60px">
+                            <h4><strong>Code</strong></h4>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="">
+                        <image src="img/database_icon.png" height="60px">
+                            <h4><strong>Data</strong></h4>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="col-md-10 col-md-offset-1" style="margin-top: 20px;">
+            <video id="hdrfusion_demo" width="100%" autoplay loop muted>
+                <source src="img/webpage.mp4#t=0.5" type="video/mp4" />
+            </video>
+            <div class="col-md-12 text-center" style="margin-top: 10px;">
+            Our method can reconstruct high speed and complex motion with high quality.
+            </div>
+        </div>
+        
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Abstract
+                </h3>
+                <p class="text-justify pb-0">
+                    Reconstructing fast-dynamic scenes from multi-view videos is crucial for high-speed motion analysis and realistic 4D reconstruction. However, the majority of 4D capture systems are limited to frame rates below 30 FPS (frames per second), and a direct 4D reconstruction of high-speed motion from low FPS input may lead to undesirable results. In this work, we propose a high-speed 4D capturing system only using low FPS cameras, through novel capturing and processing modules. On the capturing side, we propose an asynchronous capture scheme that increases the effective frame rate by staggering the start times of cameras. By grouping cameras and leveraging a base frame rate of 25 FPS, our method achieves an equivalent frame rate of 100–200 FPS without requiring specialized high-speed cameras. On processing side, we also propose a novel generative model to fix artifacts caused by 4D sparse-view reconstruction, as asynchrony reduces the number of viewpoints at each timestamp. Specifically, we propose to train a video-diffusion-based artifact-fix model for sparse 4D reconstruction, which refines missing details, maintains temporal consistency, and improves overall reconstruction quality. Experimental results demonstrate that our method significantly enhances high-speed 4D reconstruction compared to synchronized capture.
+                </p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Overview of 4DSloMO
+                </h3>
+                <image src="img/pipeline.png" width="100%">
+
+                </image>
+                <p class="text-justify pb-0",style="margin-top: 10px;">
+                Given several asynchronous multi-view videos, we first initialize a 4D Gaussian model for a specific iteration. We then employ an artifact-fix video diffusion model to refine the input videos. The refined videos are subsequently used to update the 4D Gaussian model.
+                </p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Results
+                </h3>
+                <video id="hdrfusion_demo" width="100%" autoplay loop muted>
+                    <source src="img/webpage_result.mp4#t=0.5" type="video/mp4" />
+                </video>
+
+                <video id="hdrfusion_demo" width="100%" autoplay loop muted>
+                    <source src="img/webpage_ablation.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1" style="margin-bottom: 28px;">
+                <h3 style="text-align: center;margin-bottom: 28px;">
+                    Video
+                </h3>
+                <video id="photostyletransfer_demo" width="90%" muted controls style="margin-top: 138px;">
+                    <source src="img/demo_all_webpage.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
+
+        <!-- <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Disentangle ISP enhancements
+                </h3>
+                <p class="text-justify">
+                    When capturing multi-view images for training NeRF, the image signal processing (ISP) in the camera program enhances each captured view independently.
+                    This results in photometric variations in the NeRF input, leading to "floaters" in the synthesized novel views.
+                    Our bilateral guided NeRF training addresses this issue by disentangling per-view enhancements.
+                </p>
+                <p class="text-justify">
+                    In this case, the scene is captured under varying exposure and ISO, using a cell phone camera.
+                    Floaters appear in the baseline result (left), but our method (right) can synthesize clean novel views.
+                </p>
+                <video class="video" width=100% id="baselinecmp" loop autoplay muted src="img/baseline_cmp_concat.mp4" onplay="resizeAndPlay(this, 1.0)"></video>
+                <canvas style="margin-top: -10px; margin-bottom: 10px;" height=0 class="videoMerge" id="baselinecmpMerge"></canvas>
+            </div>
+        </div>
+           
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Lift 2D enhancements to 3D
+                </h3>
+                <p class="text-justify" style="margin-top: 20px;">
+                    Our proposed bilateral guided finishing enables 3D-level human-adjusted enhancements.
+                    Users can simply select a rendered view and retouch it in an image editor (e.g.,  Adobe Lightroom&reg;). Then, our method can lift the 2D editing to the whole scene, achieving compelling renditions consistently over synthesized views.
+                </p>
+                <div class="bulma-tabs">
+                    <ul>
+                        <li class="bulma-tab is-active" onclick="openTab(event, '3dretouch_garden')"><a href="javascript:void(0)">Garden</a></li>
+                        <li class="bulma-tab" onclick="openTab(event, '3dretouch_stump')"><a href="javascript:void(0)">Stump</a></li>
+                        <li class="bulma-tab" onclick="openTab(event, '3dretouch_eliothall')"><a href="javascript:void(0)">Building</a></li>
+                        <li class="bulma-tab" onclick="openTab(event, '3dretouch_lionpavilion')"><a href="javascript:void(0)">Lion Pavilion</a></li>
+                        <li class="bulma-tab" onclick="openTab(event, '3dretouch_windowlego')"><a href="javascript:void(0)">Lego</a></li>
+                        <li class="bulma-tab" onclick="openTab(event, '3dretouch_pondbike')"><a href="javascript:void(0)">Pond & Bike</a></li>
+                    </ul>
+                </div>
+                <div style="overflow: hidden; aspect-ratio: 1.5; margin-bottom: 10px;" id="tab-content">
+                    <div id="3dretouch_garden" class="bulma-content-tab">
+                        <video id="garden_demo" width="100%" style="object-position: 50% bottom;" autoplay loop muted>
+                            <source src="img/garden_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div id="3dretouch_eliothall" class="bulma-content-tab" style="display: none;">
+                        <video id="eliothall_demo" width="100%" style="object-position: 50% bottom;" autoplay loop muted>
+                            <source src="img/eliothall_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div id="3dretouch_lionpavilion" class="bulma-content-tab" style="display: none;">
+                        <video id="lionpavilion_demo" width="100%" style="object-position: 50% bottom;" autoplay loop muted>
+                            <source src="img/lionpavilion_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div id="3dretouch_windowlego" class="bulma-content-tab" style="display: none;">
+                        <video id="windowlego_demo" width="100%" style="object-position: 50% bottom;" autoplay loop muted>
+                            <source src="img/windowlego_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div id="3dretouch_pondbike" class="bulma-content-tab" style="display: none;">
+                        <video id="pondbike_demo" width="100%" style="object-position: 50% top;" autoplay loop muted>
+                            <source src="img/pondbike_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                    <div id="3dretouch_stump" class="bulma-content-tab" style="display: none;">
+                        <video id="pondbike_demo" width="100%" style="object-position: 50% bottom;" autoplay loop muted>
+                            <source src="img/stump_demo.mp4#t=0.5" type="video/mp4" />
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    HDR fusion
+                </h3>
+                <p class="text-justify">
+                    Our bilateral guided training can achieve HDR fusion in NeRF. Best-exposed parts of the input images (a) with varying exposure are fused into a HDR radiance field (b).
+                    Our radiance-finishing can further adjust the color tone of the fused radiance fields by lifting a single view enhancement (c).
+                </p>
+                <div class="col-8 col-offset-2" style="margin-top: 20px;">
+                    <video id="hdrfusion_demo" width="100%" autoplay loop muted>
+                        <source src="img/hdrfusion_sharpshadow_concat.mp4#t=0.5" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (a) Input samples w/ varying exposure
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (b) Radiance field with HDR fusion
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (c) Tone-mapped by our 3D finishing
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Disentangle varying lighting
+                </h3>
+                <p class="text-justify" style="margin-top: 10px;">
+                    Varying lighting across input views (a) causes "disco" artifacts on the baseline results (b). While our method (c) can somewhat disentangle the impacts of varying lights.
+                </p>
+                <div class="col-8 col-offset-2" style="margin-top: 20px;">
+                    <video id="photostyletransfer_demo" width="100%" autoplay loop muted>
+                        <source src="img/varyinglighting.mp4#t=0.5" type="video/mp4" />
+                    </video>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (a) Input samples w/ varying lighting
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (b) Results of ZipNeRF baseline
+                        </p>
+                    </div>
+                    <div class="col-xs-4">
+                        <p class="text-center">
+                            (c) Results of bilateral guided training
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Object recoloring
+                </h3>
+                <p class="text-justify" style="margin-top: 10px;">
+                    In this case, we first edit the color of the bulldozer in a single view, then train the low-rank 4D bilateral grid on the 2D editing to perform 3D-level recoloring.
+                    The local and edge-aware operator in the bilateral space will change the color of the subject without significantly affecting surrounding areas.
+                </p>
+                <div class="video-container">
+                    <video class="video" width=100% id="recoloring" loop autoplay muted src="img/kitchen_concat.mp4" onplay="resizeAndPlay(this, 0.5)"></video>
+                    <button class="video-play-button" id="recoloringPlayBtn" onclick="playRecoloringVideo()" style="display: none;">▶</button>
+                </div>
+                <canvas style="margin-top: -10px; margin-bottom: 10px;" height=0 class="videoMerge" id="recoloringMerge"></canvas>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Photorealistic style transfer
+                </h3>
+                <p class="text-justify" style="margin-top: 10px;">
+                    We first transfer the reference style to a selected view,
+                    then lift the 2D view stylization to the whole 3D scene using our proposed radiance-finishing via a low-rank 4D bilateral grid.
+                </p>
+                <div style="margin-top: 20px;">
+                    <video id="photostyletransfer_demo" width="100%" autoplay loop muted>
+                        <source src="img/pts_demo1.mp4#t=0.5" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Live demo
+                </h3>
+                <p class="text-justify" style="margin-top: 10px;">
+                    We develop a simple interactive 3D editor with our method, built on the <a href="https://github.com/kwea123/ngp_pl">ngp_pl</a> backbone
+                    (a PyTorch implementation of <a href="https://nvlabs.github.io/instant-ngp/">Instant-NGP</a>).
+                    To try our method with other backbones, please check out the <a href="https://github.com/yuehaowang/bilarf?tab=readme-ov-file#lib_bilagridpy">lib_bilagrid.py</a> module.
+                </p>
+                <div style="margin-top: 20px;">
+                    <video id="photostyletransfer_demo" width="100%" muted controls>
+                        <source src="img/live_video.mp4" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 10px;">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Related work
+                </h3>
+                <p class="text-justify">
+                    This work stands on the shoulders of many prior papers. Especially, the following work illuminated us significantly:</p>
+                <ul>
+                    <li>
+                        <a href="https://people.csail.mit.edu/sparis/publi/2007/siggraph/Chen_07_Bilateral_Grid.pdf">Real-time Edge-aware Image Processing with the Bilateral Grid</a> introduces the bilateral grid data structure, which is the fundamental of our method.
+                        <a href="https://people.csail.mit.edu/hasinoff/pubs/ChenEtAl16-bgu.pdf">Bilateral Guided Upsampling</a> demonstrates that the bilateral grid is a universal approximator for various image enhancements. We further adopt this operator to process 3D scenes.
+                    </li>
+                    <li><a href="https://arxiv.org/pdf/1707.02880.pdf">HDRNet</a> demonstrates that the bilateral grid can work with neural networks due to its differentiability.</li>
+                    <li><a href="https://arxiv.org/pdf/2203.09517.pdf">TensoRF</a> shows the effectiveness of low-rank approximation for 3D representations.</li>
+                    <li><a href="https://arxiv.org/pdf/2111.13679.pdf">RawNeRF</a> first incorporates camera pipelines into NeRF.</li>
+                    <li>Our method pipeline resembles the classic <a href="https://research.google/pubs/burst-photography-for-high-dynamic-range-and-low-light-imaging-on-mobile-cameras/">HDR+</a> algorithm, which first merges a burst of frames into an HDR image and then applies local tone mapping for photo-finishing.</li>
+                </ul>
+            </div>
+        </div> -->
+
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <h3>
+                    Citation
+                </h3>
+                If you find this work helpful, please consider citing:
+                <div class="text-left" style="background-color:#eeeeee; margin-top: 10px;">
+<pre><code>@article{wang2024bilateral,
+    title={Bilateral Guided Radiance Field Processing},
+    author={Wang, Yuehao and Wang, Chaoyi and Gong, Bingchen and Xue, Tianfan},
+    journal={ACM Transactions on Graphics (TOG)},
+    volume={43},
+    number={4},
+    pages={1--13},
+    year={2024},
+    publisher={ACM New York, NY, USA}
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</body>
+</html>
