@@ -1,0 +1,11 @@
+diffsynth==1.1.7
+imageio==2.37.0
+imagesize==1.4.1
+tqdm==4.67.1
+transformers==4.46.2
+kornia==0.6.12
+omegaconf==2.3.0
+torchmetrics
+plyfile
+./simple-knn
+./pointops2
